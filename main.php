@@ -28,5 +28,3 @@ function Calc($string)
 }
 
 echo Calc($string);
-
-print_r(count_chars($string, 1)[ord("(")]);
