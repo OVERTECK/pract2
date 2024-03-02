@@ -7,24 +7,23 @@ function Calc($string)
     
     $string = str_replace(" ", "", $string);
 
-    $arr = [];
+    $arr_int = [];
 
     $SIZE = strlen($string);
 
+    $num = "";
     for ($i = 0; $i < $SIZE; $i++) {
         
-        switch($string[$i]) {
-            case "+":
-
+        if (is_numeric($string[$i])) {
+            $num += (string)$string[$i];
+        } else {
+            array_push($arr_int, $string[$i]);
+            $num = "";
         }
-            
-
-        array_push($arr, $string[$i]);
+        
     }
 
-
-
-    return print_r($arr);
+    return print_r($arr_int);
 }
 
 echo Calc($string);
