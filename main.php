@@ -134,7 +134,6 @@ function Calc($string)
 
 // $string = "2 + 5 - 4 * (1 + 3)";
 $string = "2 * 1 + (2 + 2) + 2 - (2 + 2)";
-// $string = "1";
+$string = "1";
 
-// var_dump(Calc($string));
 print_r(Calc($string));
