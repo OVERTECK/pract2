@@ -4,22 +4,22 @@ function Calc($string)
 {   
     $string = str_replace(' ', '', $string);
 
-    if (is_numeric($string)) return (int)$string;
+    if (is_numeric($string)) return (float)$string;
 
-    $SIZE = strlen($string);
+    $sizeString = strlen($string);
     
     $elements = [];
     $num = "";
 
-    for ($i = 0; $i < $SIZE; $i++) {
-        $element = $string[$i];
-        if (is_numeric($element) || $element === ".") {
-            $num .= $element;
+    for ($i = 0; $i < $sizeString; $i++) {
+        $char = $string[$i];
+        if (is_numeric($char) || $char === ".") {
+            $num .= $char;
 
-            if ($i === $SIZE - 1) array_push($elements, $element);
+            if ($i === $sizeString - 1) array_push($elements, $char);
         } else {
             if ($num !== "") array_push($elements, (float)$num);
-            array_push($elements, $element);
+            array_push($elements, $char);
             $num = "";
         }
         
@@ -39,7 +39,6 @@ function Calc($string)
     $count_sign = 0;
 
     foreach ($elements as $element) {
-        // echo $count_sign . "  " . $element . "\n";
         if (!is_numeric($element) && ($element !== "(" && $element !== ")")) {
             $count_sign += 1;
         } elseif (is_numeric($element)) {
@@ -52,8 +51,9 @@ function Calc($string)
     $operationsStek = [];
 
     $priorityOfOperations = [
-        "(" => 3,
-        ")" => 3,
+        "(" => 4,
+        ")" => 4,
+        "~" => 3,
         "^" => 2,
         "/" => 1,
         "*" => 1,
@@ -91,6 +91,7 @@ function Calc($string)
         }
     }
 
+    // Выписываем оставшиеся операции из $operationsStek в $polishNotation
     foreach ($operationsStek as $element) {
         $headStek = array_pop($operationsStek);
 
@@ -99,6 +100,9 @@ function Calc($string)
 
     $stek = [];
 
+    // Записываем в стек числа, иначе если операция, берем из 
+    // стека два последних числа и ищем подходящую операцию.
+    // Если такой операции нет - вызываем исключение.
     foreach ($polishNotation as $element) {
         if (is_numeric($element)) {
             $stek[] = $element;
@@ -122,18 +126,20 @@ function Calc($string)
                 case "^":
                     $resultDigit = $leftDigit ** $rightDigit;
                     break;
+                default:
+                    throw new Exception("Ошибка. В выражении содержится неизвестная операция.");
             }
 
             $stek[] = $resultDigit;
         }
     }
 
-    return $stek;
+    return $stek[0];
 
 }
 
 // $string = "2 + 5 - 4 * (1 + 3)";
-$string = "2 * 1 + (2 + 2) + 2 - (2 + 2)";
-$string = "1";
+$string = "2 ^ 3";
+// $string = "1";
 
 print_r(Calc($string));

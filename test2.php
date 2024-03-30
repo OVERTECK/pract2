@@ -10,4 +10,4 @@ $priorityOfOperations = [
     "-" => 0
 ];
 
-echo $priorityOfOperations["1"];
+echo ~1 + 1;
