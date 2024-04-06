@@ -73,6 +73,7 @@ function Calc($string)
 
         if ($element === ")") {
             $temp = array_pop($operationsStek);
+            
             while (count($operationsStek) > 0 && $temp !== "(") {
                 $polishNotation[] = $temp;
                 $temp = array_pop($operationsStek);
