@@ -1,6 +1,6 @@
 <?php
 
-function Calc($string)
+function calc($string)
 {
     $string = str_replace(' ', '', $string);
 
@@ -73,7 +73,7 @@ function Calc($string)
 
         if ($element === ")") {
             $temp = array_pop($operationsStek);
-            
+
             while (count($operationsStek) > 0 && $temp !== "(") {
                 $polishNotation[] = $temp;
                 $temp = array_pop($operationsStek);
