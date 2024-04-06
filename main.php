@@ -4,8 +4,6 @@ function Calc($string)
 {
     $string = str_replace(' ', '', $string);
 
-
-
     $sizeString = strlen($string);
 
     $elements = [];
@@ -141,12 +139,9 @@ function Calc($string)
 }
 
 $string = "2";
-// $string = "2 ^ 3";
-// $string = "1";
+
 try {
     print_r(Calc($string));
 } catch (Exception $e) {
     echo $e->getMessage();
 }
-
-// убрать лишние else в if добавить continue, добавить проверку деление на ноль
