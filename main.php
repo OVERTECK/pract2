@@ -1,13 +1,13 @@
 <?php
 
-function Calc($string) 
-{   
+function Calc($string)
+{
     $string = str_replace(' ', '', $string);
 
-    if (is_numeric($string)) return (float)$string;
+
 
     $sizeString = strlen($string);
-    
+
     $elements = [];
     $num = "";
 
@@ -22,7 +22,6 @@ function Calc($string)
             array_push($elements, $char);
             $num = "";
         }
-        
     }
 
     $count = 0;
@@ -36,15 +35,15 @@ function Calc($string)
 
     if ($count !== 0) throw new Exception("Ошибка. Неправильная расстановка скобок.");
 
-    $count_sign = 0;
+    $countSign = 0;
 
     foreach ($elements as $element) {
         if (!is_numeric($element) && ($element !== "(" && $element !== ")")) {
-            $count_sign += 1;
+            $countSign += 1;
         } elseif (is_numeric($element)) {
-            $count_sign -= 1;
-        } 
-        if ($count_sign === 1) throw new Exception("Ошибка. Неправильная расстановка операций.");
+            $countSign -= 1;
+        }
+        if ($countSign === 1) throw new Exception("Ошибка. Неправильная расстановка операций.");
     }
 
     $polishNotation = [];
@@ -53,7 +52,6 @@ function Calc($string)
     $priorityOfOperations = [
         "(" => 4,
         ")" => 4,
-        "~" => 3,
         "^" => 2,
         "/" => 1,
         "*" => 1,
@@ -64,82 +62,91 @@ function Calc($string)
     foreach ($elements as $element) {
         if (is_numeric($element)) {
             $polishNotation[] = $element;
-        } else {
-            
-            if (count($operationsStek) === 0) {
-                $operationsStek[] = $element;
-                continue;
-            } else {
-                $headStek = $operationsStek[count($operationsStek) - 1];
-            }
-            
-            if ($element === ")") {
-                $temp = array_pop($operationsStek);
-                while (count($operationsStek) > 0 && $temp !== "(") {
-                    $polishNotation[] = $temp;
-                    $temp = array_pop($operationsStek);
-                }
-                continue;
-            }
-
-            if ($priorityOfOperations[$headStek] < $priorityOfOperations[$element] || $headStek === "(" || $headStek === ")") {
-                $operationsStek[] = $element;
-            } else {
-                $polishNotation[] = array_pop($operationsStek);
-                $operationsStek[] = $element;
-            }
+            continue;
         }
+
+        if (count($operationsStek) === 0) {
+            $operationsStek[] = $element;
+            continue;
+        }
+
+        $headStek = $operationsStek[count($operationsStek) - 1];
+        
+
+        if ($element === ")") {
+            $temp = array_pop($operationsStek);
+            while (count($operationsStek) > 0 && $temp !== "(") {
+                $polishNotation[] = $temp;
+                $temp = array_pop($operationsStek);
+            }
+            continue;
+        }
+
+        if ($priorityOfOperations[$headStek] < $priorityOfOperations[$element] || $headStek === "(" || $headStek === ")") {
+            $operationsStek[] = $element;
+            continue;
+        }
+        $polishNotation[] = array_pop($operationsStek);
+        $operationsStek[] = $element;
     }
 
     // Выписываем оставшиеся операции из $operationsStek в $polishNotation
     foreach ($operationsStek as $element) {
         $headStek = array_pop($operationsStek);
-
         $polishNotation[] = $headStek;
     }
 
     $stek = [];
 
-    // Записываем в стек числа, иначе если операция, берем из 
+    // Записываем в стек число, иначе, если операция, берем из 
     // стека два последних числа и ищем подходящую операцию.
     // Если такой операции нет - вызываем исключение.
     foreach ($polishNotation as $element) {
         if (is_numeric($element)) {
             $stek[] = $element;
-        } else {
-            $rightDigit = array_pop($stek);
-            $leftDigit = array_pop($stek);
-
-            switch ($element) {
-                case "+":
-                    $resultDigit = $leftDigit + $rightDigit;
-                    break;
-                case "-":
-                    $resultDigit = $leftDigit - $rightDigit;
-                    break;
-                case "*":
-                    $resultDigit = $leftDigit * $rightDigit;
-                    break;
-                case "/":
-                    $resultDigit = $leftDigit / $rightDigit;
-                    break;
-                case "^":
-                    $resultDigit = $leftDigit ** $rightDigit;
-                    break;
-                default:
-                    throw new Exception("Ошибка. В выражении содержится неизвестная операция.");
-            }
-
-            $stek[] = $resultDigit;
+            continue;
         }
+
+        $rightDigit = array_pop($stek);
+        $leftDigit = array_pop($stek);
+
+        switch ($element) {
+            case "+":
+                $resultDigit = $leftDigit + $rightDigit;
+                break;
+            case "-":
+                $resultDigit = $leftDigit - $rightDigit;
+                break;
+            case "*":
+                $resultDigit = $leftDigit * $rightDigit;
+                break;
+            case "/":
+                if ($rightDigit === "0") {
+                    throw new Exception("Ошибка. Деление на ноль невозможно.");
+                }
+
+                $resultDigit = $leftDigit / $rightDigit;
+                break;
+            case "^":
+                $resultDigit = $leftDigit ** $rightDigit;
+                break;
+            default:
+                throw new Exception("Ошибка. В выражении содержится неизвестная операция.");
+        }
+
+        $stek[] = $resultDigit;
     }
 
     return $stek[0];
-
 }
 
-// $string = "2 + 5 - 4 * (1 + 3)";
-$string = "2 ^ 3";
+$string = "2";
+// $string = "2 ^ 3";
 // $string = "1";
+try {
+    print_r(Calc($string));
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 
-print_r(Calc($string));
+// убрать лишние else в if добавить continue, добавить проверку деление на ноль
